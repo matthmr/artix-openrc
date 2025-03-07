@@ -1,0 +1,55 @@
+#!/usr/bin/openrc-run
+description="Sets up the terminal and tmp environments"
+xdg_runtime_dir=/run/user/1000
+
+depend()
+{
+	need localmount
+	before logger
+	after clock root sysctl bootmisc
+	keyword -prefix -timeout
+}
+
+start()
+{
+	ebegin "Setting up tmp"
+	if checkpath -W /tmp; then
+		mkdir /tmp/core
+		mkdir /tmp/user
+
+		chmod 777 /tmp/core
+		chmod 700 /tmp/user
+
+		chown nobody:nobody /tmp/core
+		chown user:users /tmp/user
+	fi
+
+	if [ -x /sbin/restorecon ]; then
+		restorecon /tmp/core
+	fi
+
+	ebegin "Setting up VT"
+	kbdrate -d 220 -r 40
+
+	ebegin "Setting up XDG"
+	mkdir -p $xdg_runtime_dir
+	chown mh:mh $xdg_runtime_dir
+	chmod 700 $xdg_runtime_dir
+
+	ebegin "Setting up hibernation"
+	echo shutdown > /sys/power/disk
+
+	return 0
+}
+
+stop()
+{
+	ebegin "Clearing up tmp"
+
+	rm -rf /tmp/core
+	rm -rf /tmp/user
+
+	return 0
+}
+
+# vim: ft=sh

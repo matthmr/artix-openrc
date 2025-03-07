@@ -1,0 +1,5 @@
+alsasound boot
+net.eth0 boot
+net.lo boot
+setup default
+mdev sysinit

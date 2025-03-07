@@ -1,0 +1,15 @@
+#!/usr/bin/openrc-run
+
+name="mdev daemon"
+description="kernel device manager; made by busybox"
+
+depend() {
+	need sysfs dev-mount
+	provide dev
+	before checkfs fsck
+}
+
+start() {
+	/usr/bin/mdev -d
+	return 0
+}

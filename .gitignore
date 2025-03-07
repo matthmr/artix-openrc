@@ -34,3 +34,9 @@ src/
 *.service
 *.timer
 *.socket
+
+# pkg
+
+openrc-extra
+alpm-hooks
+GIT

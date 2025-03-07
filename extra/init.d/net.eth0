@@ -1,0 +1,18 @@
+#!/usr/bin/openrc-run
+
+description="Configures network interfaces for eth0"
+
+depend()
+{
+	need sysfs localmount
+	after modules bootmisc net.lo net.lo0 dbus
+	keyword -jail -prefix -vserver
+	provide net
+}
+
+start()
+{
+	ebegin "Starting up interface eth0"
+	(udhcpc -b -q -s /usr/lib/netifrc/sh/udhcpc-hook.sh -A 1 > /dev/null 2> /dev/null) &
+	eend $?
+}

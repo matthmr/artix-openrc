@@ -1,0 +1,107 @@
+diff --git a/etc/rc.conf b/etc/rc.conf
+index ca0f920..5499782 100644
+--- a/etc/rc.conf
++++ b/etc/rc.conf
+@@ -13,13 +13,13 @@
+ # boot so you can choose to start specific services. Set to "NO" to disable
+ # this feature. This feature is automatically disabled if rc_parallel is
+ # set to YES.
+-#rc_interactive="YES"
++rc_interactive="NO"
+ 
+ # If we need to drop to a shell, you can specify it here.
+ # If not specified we use $SHELL, otherwise the one specified in /etc/passwd,
+ # otherwise /bin/sh
+ # Linux users could specify /sbin/sulogin
+-#rc_shell=/bin/sh
++rc_shell=/usr/bin/sulogin
+ 
+ # Do we allow any started service in the runlevel to satisfy the dependency
+ # or do we want all of them regardless of state? For example, if net.eth0
+@@ -48,15 +48,15 @@
+ # /var/log/rc.log
+ # NOTE: Linux systems require the devfs service to be started before
+ # logging can take place and as such cannot log the sysinit runlevel.
+-#rc_logger="NO"
++rc_logger="YES"
+ 
+ # Through rc_log_path you can specify a custom log file.
+ # The default value is: /var/log/rc.log
+-#rc_log_path="/var/log/rc.log"
++rc_log_path="/var/log/rc.log"
+ 
+ # If you want verbose output for OpenRC, set this to yes. If you want
+ # verbose output for service foo only, set it to yes in /etc/conf.d/foo.
+-#rc_verbose=no
++rc_verbose="NO"
+ 
+ # By default we filter the environment for our running scripts. To allow other
+ # variables through, add them here. Use a * to allow all variables through.
+@@ -89,7 +89,7 @@
+ # There variables are shared between many init scripts
+ 
+ # Set unicode to NO to turn off unicode support for keyboards and screens.
+-#unicode="YES"
++unicode="YES"
+ 
+ # This is how long fuser should wait for a remote server to respond. The
+ # default is 60 seconds, but  it can be adjusted here.
+@@ -190,7 +190,7 @@
+ # on Linux and Hurd, this is the number of ttys allocated for logins
+ # It is used in the consolefont, keymaps, numlock and termencoding
+ # service scripts.
+-rc_tty_number=12
++rc_tty_number=3
+ 
+ ##############################################################################
+ # LINUX CGROUPS RESOURCE MANAGEMENT
+diff --git a/init.d/bootmisc.in b/init.d/bootmisc.in
+index 233dfc5..3d60290 100644
+--- a/init.d/bootmisc.in
++++ b/init.d/bootmisc.in
+@@ -230,7 +230,7 @@ start()
+ 						mv /var/log/dmesg /var/log/dmesg.old
+ 					fi
+ 					dmesg > /var/log/dmesg
+-					chmod 640 /var/log/dmesg
++					chmod 644 /var/log/dmesg
+ 					;;
+ 			esac
+ 		fi
+diff --git a/init.d/hostname.in b/init.d/hostname.in
+index fc94933..b0f682e 100644
+--- a/init.d/hostname.in
++++ b/init.d/hostname.in
+@@ -20,8 +20,8 @@ depend()
+ start()
+ {
+ 	local h source
+-	if read -r h _ 2> /dev/null < @SYSCONFDIR@/hostname; then
+-		source="@SYSCONFDIR@/hostname"
++	if read -r h _ 2> /dev/null < /etc/hostname; then
++		source="/etc//hostname"
+ 	elif [ -n "${hostname}" ]; then
+ 		h=${hostname}
+ 		source="@SYSCONFDIR@/conf.d/${RC_SVCNAME}"
+diff --git a/tools/meson_runlevels.sh b/tools/meson_runlevels.sh
+index 1473d4e..fd62e8b 100755
+--- a/tools/meson_runlevels.sh
++++ b/tools/meson_runlevels.sh
+@@ -38,7 +38,7 @@ case "${os}" in
+ 		boot="${boot} ${boot_BSD} adjkerntz dumpon modules syscons"
+ 		;;
+ 	Linux)
+-		boot="${boot} binfmt hwclock keymaps modules mtab procfs
++		boot="${boot} binfmt hwclock modules mtab procfs
+ 		save-keymaps save-termencoding seedrng termencoding"
+ 		;;
+ 	NetBSD)
+@@ -46,7 +46,7 @@ case "${os}" in
+ 		;;
+ esac
+ 
+-default="local netmount"
++default="local"
+ 
+ nonetwork="local"
+ 
