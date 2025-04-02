@@ -80,6 +80,7 @@ build(){
     local _meson_options=()
     _meson_options+=(
         --sbindir=/usr/bin
+        --libexecdir=/usr/lib
         -Dbash-completions=true
         -Dbranding='"Linux"'
         -Dos=Linux

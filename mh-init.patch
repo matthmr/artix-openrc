@@ -83,6 +83,19 @@ index fc94933..02eff15 100644
  	elif [ -n "${hostname}" ]; then
  		h=${hostname}
  		source="@SYSCONFDIR@/conf.d/${RC_SVCNAME}"
+diff --git a/meson.build b/meson.build
+index fef9dcb..20d81ed 100644
+--- a/meson.build
++++ b/meson.build
+@@ -85,7 +85,7 @@ bindir = get_option('prefix') / get_option('bindir')
+ libdir = get_option('prefix') / get_option('libdir')
+ pluginsdir = libdir / 'rc/plugins'
+ libexecdir = get_option('prefix') / get_option('libexecdir')
+-rc_libexecdir = libexecdir / 'rc'
++rc_libexecdir = libexecdir / 'openrc'
+ rc_bindir = rc_libexecdir / 'bin'
+ rc_sbindir = rc_libexecdir / 'sbin'
+ rc_shdir = rc_libexecdir / 'sh'
 diff --git a/tools/meson_runlevels.sh b/tools/meson_runlevels.sh
 index 1473d4e..fd62e8b 100755
 --- a/tools/meson_runlevels.sh
