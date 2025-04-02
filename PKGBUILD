@@ -3,18 +3,19 @@
 # Contributor: williamh <williamh@gentoo.org>
 
 _url=https://gitea.artixlinux.org/artix
-_extras=1.2
-_alpm=1.7
+_extra=1.2
+_alpm=2.2
 
 pkgname=openrc
-pkgver=0.56
-pkgrel=1
-pkgdesc="Gentoo's universal init system"
+pkgver=0.61
+pkgrel=3
+pkgdesc="OpenRC is a dependency-based init system that works with the system-provided init program"
 arch=('x86_64')
 url="https://github.com/OpenRC/openrc"
 license=('BSD-2-Clause')
 makedepends=('git' 'meson')
 depends=(
+    # 'audit' #'libaudit.so'
     'bash'
     'glibc'
     'inetutils'
@@ -42,20 +43,29 @@ backup=(
     'etc/openrc/conf.d/hwclock'
     'etc/openrc/conf.d/etmpfiles-dev'
     'etc/openrc/conf.d/etmpfiles-setup'
+    'etc/openrc/conf.d/localmount'
+    'etc/openrc/conf.d/netmount'
+    'etc/openrc/conf.d/bootmisc'
+    'etc/openrc/conf.d/dmesg'
+    'etc/openrc/conf.d/devfs'
+    'etc/openrc/conf.d/killprocs'
+    'etc/openrc/conf.d/swap'
     'etc/openrc/conf.d/agetty.tty'{1,2,3}
 )
 source=(
-    "${pkgname}-${pkgver}.tar.gz::${url}/archive/refs/tags/${pkgver}.tar.gz"
+    "git+${url}.git#tag=${pkgver}"
     'openrc.logrotate'
     'sysctl.conf'
-    "git+${_url}/openrc-extra.git#tag=${_extras}"
+    'openrc-user.pam'
+    "git+${_url}/openrc-extra.git#tag=${_extra}"
     "git+${_url}/alpm-hooks.git#tag=${_alpm}"
 )
-sha256sums=('a06b530290057637eab17fc943cbf79c0335eb734ba71ece38b9f3acd8a341d4'
+sha256sums=('b2b7899bb9ef5d426c7537a9fdb1d3ca8cd0e029b7e2c92a23201c603a62e40d'
             '0b44210db9770588bd491cd6c0ac9412d99124c6be4c9d3f7d31ec8746072f5c'
             '874e50bd217fef3a2e3d0a18eb316b9b3ddb109b93f3cbf45407170c5bec1d6d'
+            '5b6a7ceb46f057581dcdce76794c045b711ff2a8f063ced0dba682697da9ef06'
             '88c2ddad5ac5d347962ce9805a0ed7a4f1737aaafa3d6a8c0a7a55009ce5fef1'
-            '6b89db32c61731ae970a7043907c08c51df3aa6b0fb9a527e70a2b6346150511')
+            'f29110a8222b2d67a31918869ae8261bdf35d3404cd1effbb3f9fcfa97cdbb25')
 
 
 check(){
@@ -63,7 +73,7 @@ check(){
 }
 
 build(){
-    pushd "${pkgname}-${pkgver}"
+    pushd "${pkgname}"
     patch -N -p1 -i ../../mh-init.patch
     popd
 
@@ -88,7 +98,7 @@ build(){
         -Daudit=disabled
     )
 
-    arch-meson "${pkgname}-${pkgver}" build "${_meson_options[@]}"
+    arch-meson "${pkgname}" build "${_meson_options[@]}"
 
     meson compile -C build
 }
@@ -96,12 +106,16 @@ build(){
 package() {
     meson install -C build --destdir "${pkgdir}"
 
-    install -Dm644 "${srcdir}/${pkgname}-${pkgver}"/support/sysvinit/inittab "${pkgdir}/etc/openrc/inittab"
+    install -Dm644 "${srcdir}/${pkgname}"/support/sysvinit/inittab "${pkgdir}/etc/openrc/inittab"
+
+    # user pam
+    install -d "$pkgdir"/etc/pam.d
+    install -m755 "$srcdir"/openrc-user.pam "$pkgdir"/etc/pam.d/openrc-user
 
     install -Dm644 "${srcdir}/${pkgname}".logrotate "${pkgdir}"/etc/logrotate.d/"${pkgname}"
 
     # license
-    install -Dm644 "${pkgname}-${pkgver}"/LICENSE "${pkgdir}"/usr/share/licenses/"${pkgname}"/LICENSE
+    install -Dm644 "${pkgname}"/LICENSE "${pkgdir}"/usr/share/licenses/"${pkgname}"/LICENSE
 
     ####
 

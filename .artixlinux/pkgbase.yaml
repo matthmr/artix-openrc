@@ -1,7 +1,7 @@
 ---
 pkgbase:
   name: openrc
-  version: 0.56-1
+  version: 0.61-3
   arch:
     - x86_64
   pkgname:
@@ -22,9 +22,9 @@ repos:
     version: null
     packages: []
   system:
-    version: 0.56-1
+    version: 0.61-3
     packages:
-      - openrc-0.56-1-x86_64.pkg.tar.zst
+      - openrc-0.61-3-x86_64.pkg.tar.zst
   world-goblins:
     version: null
     packages: []

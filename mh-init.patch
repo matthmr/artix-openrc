@@ -56,7 +56,7 @@ index ca0f920..5499782 100644
  ##############################################################################
  # LINUX CGROUPS RESOURCE MANAGEMENT
 diff --git a/init.d/bootmisc.in b/init.d/bootmisc.in
-index 233dfc5..3d60290 100644
+index 31f81a6..5ee33d9 100644
 --- a/init.d/bootmisc.in
 +++ b/init.d/bootmisc.in
 @@ -230,7 +230,7 @@ start()
@@ -69,7 +69,7 @@ index 233dfc5..3d60290 100644
  			esac
  		fi
 diff --git a/init.d/hostname.in b/init.d/hostname.in
-index fc94933..b0f682e 100644
+index fc94933..02eff15 100644
 --- a/init.d/hostname.in
 +++ b/init.d/hostname.in
 @@ -20,8 +20,8 @@ depend()
@@ -79,7 +79,7 @@ index fc94933..b0f682e 100644
 -	if read -r h _ 2> /dev/null < @SYSCONFDIR@/hostname; then
 -		source="@SYSCONFDIR@/hostname"
 +	if read -r h _ 2> /dev/null < /etc/hostname; then
-+		source="/etc//hostname"
++		source="/etc/hostname"
  	elif [ -n "${hostname}" ]; then
  		h=${hostname}
  		source="@SYSCONFDIR@/conf.d/${RC_SVCNAME}"
