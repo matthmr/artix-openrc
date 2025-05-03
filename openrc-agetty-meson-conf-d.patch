@@ -1,0 +1,28 @@
+From e3961a81809ed8d0e594402b012ee685e4ad970f Mon Sep 17 00:00:00 2001
+From: Dudemanguy <random342@airmail.cc>
+Date: Fri, 25 Apr 2025 12:50:13 -0500
+Subject: [PATCH] conf.d/install agetty conf files via meson
+
+Since e56171b2a1815560e03b9e9b2ef507a02c59e288, the agetty symlinks are
+installed via meson option. There's no reason to not do the same for the
+conf.d files as well.
+---
+ conf.d/meson.build | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/conf.d/meson.build b/conf.d/meson.build
+index cede4e760..4f156eb21 100644
+--- a/conf.d/meson.build
++++ b/conf.d/meson.build
+@@ -60,3 +60,11 @@ elif os == 'NetBSD'
+ endif
+ 
+ install_data(conf_data, install_dir : conf_d_dir)
++
++if get_option('sysvinit') == true and os == 'Linux'
++  foreach x : get_option('agetty')
++    getty_name = 'agetty.' + x
++    install_data('agetty', install_dir: conf_d_dir,
++      rename: getty_name)
++  endforeach
++endif
