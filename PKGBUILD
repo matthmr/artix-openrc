@@ -146,13 +146,6 @@ package() {
       ln -s /etc/openrc/init.d/$srv "${pkgdir}"/etc/openrc/runlevels/$lvl
     done < ../extra/runlevels
 
-    # agetty fuckery
-    for i in 4 5 6; do
-      rm -fv "${pkgdir}"/etc/openrc/conf.d/"agetty.tty$i"
-      rm -fv "${pkgdir}"/etc/openrc/conf.d/"agetty.tty$i"
-      rm -fv "${pkgdir}"/etc/openrc/runlevels/default/"agetty.tty$i"
-    done
-
     # remove suport dir
     # rm -r "${pkgdir}"/usr/share/openrc
 }

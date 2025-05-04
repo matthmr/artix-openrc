@@ -96,6 +96,17 @@ index ba81ec5c..258092ca 100644
  rc_bindir = rc_libexecdir / 'bin'
  rc_sbindir = rc_libexecdir / 'sbin'
  rc_shdir = rc_libexecdir / 'sh'
+diff --git a/meson_options.txt b/meson_options.txt
+index 8cefbbbc..ce7d2410 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -29,5 +29,5 @@ option('sysvinit', type : 'boolean', value : false,
+ option('zsh-completions', type : 'boolean',
+   description : 'install zsh completions')
+ option('agetty', type: 'array',
+-  value: ['tty1', 'tty2', 'tty3', 'tty4', 'tty5', 'tty6'],
++  value: ['tty1', 'tty2', 'tty3'],
+   description : 'agetty symlinks to install when sysvinit is also specified')
 diff --git a/tools/meson_runlevels.sh b/tools/meson_runlevels.sh
 index 1c785618..9a059e1d 100755
 --- a/tools/meson_runlevels.sh
