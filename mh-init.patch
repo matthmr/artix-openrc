@@ -16,6 +16,16 @@ index 03acee65..9f13ab8c 100644
  
  # extra options to pass to agetty for this port
  #agetty_options=""
+diff --git a/conf.d/bootmisc b/conf.d/bootmisc
+index dd5b08e0..25ccb6d6 100644
+--- a/conf.d/bootmisc
++++ b/conf.d/bootmisc
+@@ -12,4 +12,4 @@ log_dmesg="YES"
+ # Save the previous dmesg log to dmesg.old
+ # This may be useful if you need to compare the current boot to the
+ # previous one.
+-#previous_dmesg=no
++previous_dmesg="YES"
 diff --git a/etc/rc.conf b/etc/rc.conf
 index ca0f9207..5499782f 100644
 --- a/etc/rc.conf

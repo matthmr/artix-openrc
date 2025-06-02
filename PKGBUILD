@@ -147,6 +147,8 @@ package() {
     done < ../extra/runlevels
 
     install -Dm644 ../extra/conf.d/* "${pkgdir}"/etc/openrc/conf.d/
+    install -Dm644 ../extra/init.d/* "${pkgdir}"/etc/openrc/init.d/
+    install -Dm644 ../extra/local.d/* "${pkgdir}"/etc/openrc/local.d/
 
     # remove suport dir
     # rm -r "${pkgdir}"/usr/share/openrc
