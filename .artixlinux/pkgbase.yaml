@@ -1,11 +1,11 @@
 ---
 actions:
-  addRepo: system
-  removeRepo: system-gremlins
-  triggersBuild: false
+  addRepo: system-gremlins
+  removeRepo: null
+  triggersBuild: true
   triggersRebuild: false
   triggersRepoAdd: true
-  triggersRepoRemove: true
+  triggersRepoRemove: false
   triggersNoCheck: false
 repos:
   system-goblins:
@@ -13,13 +13,16 @@ repos:
     packages: []
     debug: []
   system-gremlins:
-    version: null
-    packages: []
+    version: 0.62.5-1
+    packages:
+      - openrc-0.62.5-1-x86_64.pkg.tar.zst
+      - libeinfo-0.62.5-1-x86_64.pkg.tar.zst
     debug: []
   system:
-    version: 0.62.2-1
+    version: 0.62.4-1
     packages:
-      - openrc-0.62.2-1-x86_64.pkg.tar.zst
+      - openrc-0.62.4-1-x86_64.pkg.tar.zst
+      - libeinfo-0.62.4-1-x86_64.pkg.tar.zst
     debug: []
   world-goblins:
     version: null

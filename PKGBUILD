@@ -6,52 +6,15 @@ _url=https://gitea.artixlinux.org/artix
 _extra=1.3
 _alpm=2.2
 
-pkgname=openrc
-pkgver=0.62.2
+pkgbase=openrc
+pkgname=('openrc' 'libeinfo')
+pkgver=0.62.5
 pkgrel=1
 pkgdesc="OpenRC is a dependency-based init system that works with the system-provided init program"
 arch=('x86_64')
 url="https://github.com/OpenRC/openrc"
 license=('BSD-2-Clause')
 makedepends=('git' 'meson')
-depends=(
-    # 'audit' #'libaudit.so'
-    'bash'
-    'glibc'
-    'inetutils'
-    'libcap' 'libcap.so'
-    'pam' 'libpam.so'
-    'psmisc'
-    'perl'
-)
-optdepends=(
-    'networkmanager-openrc: networkmanager init script'
-    'elogind-openrc: elogind init script'
-)
-provides=(
-    'init-rc'
-    'svc-manager'
-    'librc.so'
-    'libeinfo.so'
-)
-conflicts=('init-rc' 'svc-manager')
-replaces=(openrc-{deptree2dot,{bash,zsh}-completions})
-backup=(
-    'etc/openrc/rc.conf'
-    'etc/openrc/conf.d/hostname'
-    'etc/openrc/conf.d/modules'
-    'etc/openrc/conf.d/hwclock'
-    'etc/openrc/conf.d/etmpfiles-dev'
-    'etc/openrc/conf.d/etmpfiles-setup'
-    'etc/openrc/conf.d/localmount'
-    'etc/openrc/conf.d/netmount'
-    'etc/openrc/conf.d/bootmisc'
-    'etc/openrc/conf.d/dmesg'
-    'etc/openrc/conf.d/devfs'
-    'etc/openrc/conf.d/killprocs'
-    'etc/openrc/conf.d/swap'
-    'etc/openrc/conf.d/agetty.tty'{1,2,3}
-)
 source=(
     "git+${url}.git#tag=${pkgver}"
     'openrc.logrotate'
@@ -63,7 +26,7 @@ source=(
 )
 
 prepare() {
-    cd "${pkgname}"
+    cd "${pkgbase}"
     # apply patch from the source array (should be a pacman feature)
     local src
     for src in "${source[@]}"; do
@@ -80,7 +43,7 @@ check(){
 }
 
 build(){
-    pushd "${pkgname}"
+    pushd "${pkgbase}"
     patch -N -p1 -i ../../mh-init.patch
     popd
 
@@ -106,24 +69,60 @@ build(){
         -Daudit=disabled
     )
 
-    arch-meson "${pkgname}" build "${_meson_options[@]}"
+    arch-meson "${pkgbase}" build "${_meson_options[@]}"
 
     meson compile -C build
 }
 
-package() {
+package_openrc() {
+    depends=(
+        # 'audit' #'libaudit.so'
+        'bash'
+        'glibc'
+        'inetutils'
+        'libcap' 'libcap.so'
+        'pam' 'libpam.so'
+        'psmisc'
+        'perl'
+        'libeinfo' 'libeinfo.so'
+    )
+    optdepends=(
+        'networkmanager-openrc: networkmanager init script'
+        'elogind-openrc: elogind init script'
+    )
+    provides=(
+        'init-rc'
+        'svc-manager'
+        'librc.so'
+    )
+    conflicts=('init-rc' 'svc-manager')
+    replaces=(openrc-{deptree2dot,{bash,zsh}-completions})
+    backup=(
+        'etc/openrc/rc.conf'
+        'etc/openrc/conf.d/hostname'
+        'etc/openrc/conf.d/modules'
+        'etc/openrc/conf.d/hwclock'
+        'etc/openrc/conf.d/etmpfiles-dev'
+        'etc/openrc/conf.d/etmpfiles-setup'
+        'etc/openrc/conf.d/localmount'
+        'etc/openrc/conf.d/netmount'
+        'etc/openrc/conf.d/bootmisc'
+        'etc/openrc/conf.d/dmesg'
+        'etc/openrc/conf.d/devfs'
+        'etc/openrc/conf.d/killprocs'
+        'etc/openrc/conf.d/swap'
+        'etc/openrc/conf.d/agetty.tty'{1,2,3}
+    )
+
     meson install -C build --destdir "${pkgdir}"
 
-    install -Dm644 "${srcdir}/${pkgname}"/support/sysvinit/inittab "${pkgdir}/etc/openrc/inittab"
+    install -Dm644 "${srcdir}/${pkgbase}"/support/sysvinit/inittab "${pkgdir}/etc/openrc/inittab"
 
     # user pam
     install -d "$pkgdir"/etc/pam.d
-    install -m755 "$srcdir"/openrc-user.pam "$pkgdir"/etc/pam.d/openrc-user
+    install -m755 "${srcdir}"/openrc-user.pam "${pkgdir}"/etc/pam.d/openrc-user
 
-    install -Dm644 "${srcdir}/${pkgname}".logrotate "${pkgdir}"/etc/logrotate.d/"${pkgname}"
-
-    # license
-    install -Dm644 "${pkgname}"/LICENSE "${pkgdir}"/usr/share/licenses/"${pkgname}"/LICENSE
+    install -Dm644 "${srcdir}/${pkgbase}".logrotate "${pkgdir}"/etc/logrotate.d/"${pkgname}"
 
     ####
 
@@ -132,10 +131,13 @@ package() {
     # sysctl defaults
     install -m755 "${srcdir}"/sysctl.conf "${pkgdir}"/usr/lib/sysctl.d/50-default.conf
 
-    # openrc extra
-    # env -C "${pkgname}-extra" patch -N -p1 -i ../../"${pkgname}"-extra.patch
+    # license
+    install -Dm644 "${pkgbase}"/LICENSE "${pkgdir}"/usr/share/licenses/"${pkgname}"/LICENSE
 
-    make -C "${pkgname}"-extra DESTDIR="${pkgdir}" SYSCONFDIR="/etc/openrc" \
+    # openrc extra
+    # env -C "${pkgbase}-extra" patch -N -p1 -i ../../"${pkgname}"-extra.patch
+
+    make -C "${pkgbase}"-extra DESTDIR="${pkgdir}" SYSCONFDIR="/etc/openrc" \
          install_kmod install_sysusers install_tmpfiles
 
     # pacman hooks
@@ -152,4 +154,32 @@ package() {
 
     # remove suport dir
     # rm -r "${pkgdir}"/usr/share/openrc
+
+    # remove init symlink
+    # rm -v "${pkgdir}"/usr/bin/init
+
+    # install -m755 "${pkgbase}"/support/deptree2dot/deptree2dot "${pkgdir}"/usr/bin/deptree2dot
+
+    # split out libeinfo
+    install -d "${srcdir}"/_libeinfo/usr/{include,lib/{pkgconfig,openrc/bin},share/man/man3}
+    mv -v "${pkgdir}"/usr/include/einfo.h "${srcdir}"/_libeinfo/usr/include/
+    mv -v "${pkgdir}"/usr/lib/libeinfo.so* "${srcdir}"/_libeinfo/usr/lib/
+    mv -v "${pkgdir}"/usr/lib/openrc/bin/e* "${srcdir}"/_libeinfo/usr/lib/openrc/bin/
+    mv -v "${pkgdir}"/usr/lib/pkgconfig/einfo.pc "${srcdir}"/_libeinfo/usr/lib/pkgconfig/
+    mv -v "${pkgdir}"/usr/share/man/man3/e*.3 "${srcdir}"/_libeinfo/usr/share/man/man3/
+}
+
+package_libeinfo() {
+    pkgdesc="Pretty console informational display"
+    depends=(
+        'glibc'
+    )
+    provides=(
+        'libeinfo.so'
+    )
+
+    mv -v "${srcdir}"/_libeinfo/* "${pkgdir}"/
+
+    # license
+    install -Dm644 "${pkgbase}"/LICENSE "${pkgdir}"/usr/share/licenses/"${pkgname}"/LICENSE
 }

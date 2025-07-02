@@ -112,7 +112,7 @@ index fc949336..02eff156 100644
  		h=${hostname}
  		source="@SYSCONFDIR@/conf.d/${RC_SVCNAME}"
 diff --git a/meson.build b/meson.build
-index ba81ec5c..258092ca 100644
+index 044e79db..fc9e0e01 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -85,7 +85,7 @@ bindir = get_option('prefix') / get_option('bindir')
@@ -149,7 +149,7 @@ index db0c1aa2..fbb34249 100644
  service_present()
  {
 diff --git a/src/shared/misc.c b/src/shared/misc.c
-index 3305963b..a4fb04c1 100644
+index 3f0d3aae..d1e2c155 100644
 --- a/src/shared/misc.c
 +++ b/src/shared/misc.c
 @@ -199,7 +199,7 @@ env_config(void)
